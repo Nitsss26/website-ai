@@ -3,7 +3,30 @@
 import Link from "next/link";
 import React from "react";
 
+
 const FooterSection = () => {
+  const NavLink = ({ link, label }: { link: string; label: string }) => (
+    <a
+      href={link}
+      className="block text-[#fff] hover:text-primary cursor-pointer transition"
+    >
+      {label}
+    </a>
+  );
+
+  // LinkGroup as inner component
+  const LinkGroup = ({
+    header,
+    children,
+  }: {
+    header: string;
+    children: React.ReactNode;
+  }) => (
+    <div className="w-full sm:w-1/2 md:w-1/3 lg:w-2/12 mb-10">
+      <h4 className="text-lg font-semibold text-white mb-4">{header}</h4>
+      <div className="space-y-2">{children}</div>
+    </div>
+  );
   return (
     <>
       <footer className="relative z-10 bg-[#020617] pb-6 pt-20 px-6 dark:bg-dark lg:pb-20 lg:pt-[120px] container">
@@ -50,7 +73,7 @@ const FooterSection = () => {
                       </defs>
                     </svg>
                   </span>
-                  <span>+012 (345) 678 99</span>
+                  <span>+91-9536286054</span>
                 </p>
               </div>
             </div>
@@ -62,10 +85,10 @@ const FooterSection = () => {
               <NavLink link="/about" label="About" />
             </LinkGroup>
             <LinkGroup header="Company">
-              <NavLink link="/#" label="About Learn AI" />
-              <NavLink link="/#" label="Contact & Support" />
-              <NavLink link="/#" label="Terms & Conditions" />
-              <NavLink link="/#" label="Privacy Policy" />
+              <NavLink link="/about" label="About Learn AI" />
+              <NavLink link="/contact" label="Contact & Support" />
+              <NavLink link="/Terms" label="Terms & Conditions" />
+              <NavLink link="/Policy" label="Privacy Policy" />
             </LinkGroup>
 
             <div className="w-full px-4 sm:w-1/2 lg:w-3/12">
@@ -202,37 +225,37 @@ const FooterSection = () => {
 
 export default FooterSection;
 
-type LinkGroupProps = React.PropsWithChildren<{ header: string }>;
+// type LinkGroupProps = React.PropsWithChildren<{ header: string }>;
 
-const LinkGroup = ({ children, header }: LinkGroupProps) => {
-  return (
-    <>
-      <div className="w-full px-4 sm:w-1/2 lg:w-2/12">
-        <div className="mb-10 w-full">
-          <h4 className="mb-9 text-lg font-semibold text-dark dark:text-white">
-            {header}
-          </h4>
-          <ul className="space-y-3">{children}</ul>
-        </div>
-      </div>
-    </>
-  );
-};
+// const LinkGroup = ({ children, header }: LinkGroupProps) => {
+//   return (
+//     <>
+//       <div className="w-full px-4 sm:w-1/2 lg:w-2/12">
+//         <div className="mb-10 w-full">
+//           <h4 className="mb-9 text-lg font-semibold text-dark dark:text-white">
+//             {header}
+//           </h4>
+//           <ul className="space-y-3">{children}</ul>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
 
-type NavLinkProps = {
-  link: string;
-  label: string;
-};
+// type NavLinkProps = {
+//   link: string;
+//   label: string;
+// };
 
-const NavLink = ({ link, label }: NavLinkProps) => {
-  return (
-    <li>
-      <Link
-        href={link}
-        className="inline-block text-base leading-loose text-gray-400 text-body-color hover:text-white dark:text-dark-6"
-      >
-        {label}
-      </Link>
-    </li>
-  );
-};
+// const NavLink = ({ link, label }: NavLinkProps) => {
+//   return (
+//     <li>
+//       <Link
+//         href={link}
+//         className="inline-block text-base leading-loose text-gray-400 text-body-color hover:text-white dark:text-dark-6"
+//       >
+//         {label}
+//       </Link>
+//     </li>
+  // );
+// };
