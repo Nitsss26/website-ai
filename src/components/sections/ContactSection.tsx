@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import axios from "axios";
 import React, { useState } from "react";
 
@@ -44,7 +45,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   return (
     <>
-      <section className="relative z-10 p-4 md:p-10 xl:p-16 lg:p-20 overflow-hidden bg-[#020617] dark:bg-dark lg:py-[120px]">
+      <section id="contactSection" className="relative z-10 p-4 md:p-10 xl:p-16 lg:p-20 overflow-hidden bg-[#020617] dark:bg-dark lg:py-[120px]">
         <div className="container">
           <div className="flex flex-wrap lg:justify-between">
             <div className="w-full px-4 lg:w-1/2 xl:w-6/12">
@@ -80,7 +81,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       Our Location
                     </h4>
                     <p className="text-base text-white">
-                      99 S.t Jomblo Park Pekanbaru 28292. Indonesia
+                     Dream Education, Kalpana Tower, Marris Rd, Centre Point, Gulzar Nagar, Hem Chand Compound, Aligarh, Uttar Pradesh 202001
                     </p>
                   </div>
                 </div>
@@ -120,7 +121,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       Phone Number
                     </h4>
                     <p className="text-base text-white">
-                      (+62)81 414 257 9980
+                      +91-9536286054
                     </p>
                   </div>
                 </div>
@@ -145,7 +146,9 @@ const handleSubmit = async (e: React.FormEvent) => {
                       Email Address
                     </h4>
                     <p className="text-base text-white">
-                      info@yourdomain.com
+                      
+                      infodreameducation.com
+
                     </p>
                   </div>
                 </div>

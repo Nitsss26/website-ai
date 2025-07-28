@@ -1,32 +1,32 @@
 'use client';
 // Analytics Data
-const weeklyProgressData = [
+// const weeklyProgressData = [
 
-  { name: 'Mon', completed: 2, started: 1, hours: 3.5 },
-  { name: 'Tue', completed: 1, started: 2, hours: 4.2 },
-  { name: 'Wed', completed: 3, started: 1, hours: 5.1 },
-  { name: 'Thu', completed: 2, started: 3, hours: 3.8 },
-  { name: 'Fri', completed: 4, started: 2, hours: 6.2 },
-  { name: 'Sat', completed: 1, started: 1, hours: 2.5 },
-  { name: 'Sun', completed: 2, started: 2, hours: 4.0 },
-];
+//   { name: 'Mon', completed: 2, started: 1, hours: 3.5 },
+//   { name: 'Tue', completed: 1, started: 2, hours: 4.2 },
+//   { name: 'Wed', completed: 3, started: 1, hours: 5.1 },
+//   { name: 'Thu', completed: 2, started: 3, hours: 3.8 },
+//   { name: 'Fri', completed: 4, started: 2, hours: 6.2 },
+//   { name: 'Sat', completed: 1, started: 1, hours: 2.5 },
+//   { name: 'Sun', completed: 2, started: 2, hours: 4.0 },
+// ];
 
-const monthlyData = [
-  { name: 'Jan', courses: 12, completed: 8, hours: 45 },
-  { name: 'Feb', courses: 15, completed: 11, hours: 52 },
-  { name: 'Mar', courses: 18, completed: 14, hours: 68 },
-  { name: 'Apr', courses: 22, completed: 18, hours: 75 },
-  { name: 'May', courses: 25, completed: 21, hours: 82 },
-  { name: 'Jun', courses: 28, completed: 24, hours: 95 },
-];
+// const monthlyData = [
+//   { name: 'Jan', courses: 12, completed: 8, hours: 45 },
+//   { name: 'Feb', courses: 15, completed: 11, hours: 52 },
+//   { name: 'Mar', courses: 18, completed: 14, hours: 68 },
+//   { name: 'Apr', courses: 22, completed: 18, hours: 75 },
+//   { name: 'May', courses: 25, completed: 21, hours: 82 },
+//   { name: 'Jun', courses: 28, completed: 24, hours: 95 },
+// ];
 
-const categoryData = [
-  { name: 'AI/ML', value: 35, color: '#3b82f6' },
-  { name: 'Web Dev', value: 25, color: '#10b981' },
-  { name: 'Programming', value: 20, color: '#8b5cf6' },
-  { name: 'Backend', value: 12, color: '#f59e0b' },
-  { name: 'Data Science', value: 8, color: '#ef4444' },
-];
+// const categoryData = [
+//   { name: 'AI/ML', value: 35, color: '#3b82f6' },
+//   { name: 'Web Dev', value: 25, color: '#10b981' },
+//   { name: 'Programming', value: 20, color: '#8b5cf6' },
+//   { name: 'Backend', value: 12, color: '#f59e0b' },
+//   { name: 'Data Science', value: 8, color: '#ef4444' },
+// ];
 
 // const initialCourses = [
 //   {
@@ -178,6 +178,7 @@ import { Badge } from '@/components/ui/badge';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
 import Image from 'next/image';
 import axios from 'axios';
+import { usePathname } from 'next/navigation'
 import { createClient } from "@/lib/supabase/client";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 // import {
@@ -212,6 +213,16 @@ export default function LearningPage() {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [formData, setFormData] = useState<Partial<Course>>({});
+  const [progressData, setProgressData] = useState<
+  { name: string; completed: number; started: number }[]
+>([]);
+
+const [weeklyProgressData, setWeeklyProgressData] = useState<
+  { name: string; hours: number }[]
+>([]);
+const [categoryData, setCategoryData] = useState<
+  { name: string; value: number; color: string }[]
+>([]);
 
   const supabase = createClient();
   const [courses, setCourses] = useState<Course[]>([]);
@@ -230,7 +241,49 @@ export default function LearningPage() {
     difficulty: '',
     duration: '',
   });
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin-dashboard');
 
+  useEffect(() => {
+  const fetchProgressData = async () => {
+    const { data } = await supabase
+      .from("learning_analytics")
+      .select("name, completed, started")
+      .eq("granularity", timeframe)
+      .order("date");
+
+    setProgressData(data || []);
+  };
+
+  const fetchStudyHours = async () => {
+    const { data } = await supabase
+      .from("learning_analytics")
+      .select("name, hours")
+      .eq("type", "study_hours")
+      .order("date");
+
+    setWeeklyProgressData(data || []);
+  };
+
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from("learning_analytics")
+      .select("name, color")
+      .eq("type", "category");
+
+    setCategoryData(
+      (data || []).map((item) => ({
+        name: item.name,
+        value: 1, // or count if available
+        color: item.color,
+      }))
+    );
+  };
+
+  fetchProgressData();
+  fetchStudyHours();
+  fetchCategories();
+}, [timeframe]);
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -297,11 +350,11 @@ export default function LearningPage() {
   };
 
 
-  const addToMyLearning = (course: Course) => {
-    if (!myCourses.find(c => c.id === course.id)) {
-      setMyCourses(prev => [...prev, { ...course, enrolledDate: new Date().toISOString().split('T')[0] }]);
-    }
-  };
+  // const addToMyLearning = (course: Course) => {
+  //   if (!myCourses.find(c => c.id === course.id)) {
+  //     setMyCourses(prev => [...prev, { ...course, enrolledDate: new Date().toISOString().split('T')[0] }]);
+  //   }
+  // };
 
   const removeFromMyLearning = (courseId: number) => {
     setMyCourses(prev => prev.filter(course => course.id !== courseId));
@@ -346,12 +399,12 @@ export default function LearningPage() {
     return colors[difficulty] || 'bg-gray-900/50 text-gray-300 border-gray-700';
   };
 
-  const getAnalyticsData = () => {
-    switch (timeframe) {
-      case 'monthly': return monthlyData;
-      default: return weeklyProgressData;
-    }
-  };
+  // const getAnalyticsData = () => {
+  //   switch (timeframe) {
+  //     case 'monthly': return monthlyData;
+  //     default: return weeklyProgressData;
+  //   }
+  // };
 
   const submitUpdate = async () => {
     if (!selectedCourse) return;
@@ -460,7 +513,7 @@ export default function LearningPage() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={getAnalyticsData()}>
+                    <AreaChart data={progressData}>
                       <defs>
                         <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -722,7 +775,7 @@ export default function LearningPage() {
               <Card key={course.id} className="bg-gray-900/50 border-gray-800 backdrop-blur-sm hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group overflow-hidden">
                 <div className="relative">
                   <Image
-                    src={course.image}
+                    src={course.image || "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=800"}
                     alt={course.title}
                     width={400}
                     height={192}
@@ -810,13 +863,14 @@ export default function LearningPage() {
               Track your progress, manage courses, and analyze your learning journey
             </p>
           </div>
-
+          {isAdmin && (
           <Button
             onClick={() => setIsAddCourseOpen(true)}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             + Add New Course
           </Button>
+          )}
         </div>
 
         {/* Navigation Tabs */}
@@ -831,15 +885,15 @@ export default function LearningPage() {
             📊 Dashboard
           </button>
           <button
-            onClick={() => setActiveTab('my-learning')}
-            className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${activeTab === 'my-learning'
+            onClick={() => setActiveTab('all-courses')}
+            className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${activeTab === 'all-courses'
               ? 'text-blue-400 border-blue-400'
               : 'text-gray-400 border-transparent hover:text-white'
               }`}
           >
-            🎓 My Learning ({myCourses.length})
+            🎓 My Learning ({courses?.length})
           </button>
-          <button
+          {/* <button
             onClick={() => setActiveTab('all-courses')}
             className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${activeTab === 'all-courses'
               ? 'text-blue-400 border-blue-400'
@@ -847,7 +901,7 @@ export default function LearningPage() {
               }`}
           >
             📚 All Courses ({courses?.length})
-          </button>
+          </button> */}
         </div>
 
         {/* Add Course Modal */}
@@ -1001,7 +1055,10 @@ export default function LearningPage() {
         {/* Tab Content */}
         {renderTabContent()}
       </div>
-      <Dialog open={isUpdateOpen} onOpenChange={setIsUpdateOpen}>
+
+      
+
+       <Dialog open={isUpdateOpen} onOpenChange={setIsUpdateOpen}>
         <DialogContent className="bg-gray-900 border border-gray-700 backdrop-blur-md text-white max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl">Update Course</DialogTitle>
@@ -1107,5 +1164,5 @@ export default function LearningPage() {
 
     </div>
   );
-}
+} 
 

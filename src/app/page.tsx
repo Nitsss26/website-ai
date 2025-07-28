@@ -10,6 +10,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import NavSection from "@/components/sections/NavSection";
 import OurMissionSection from "@/components/sections/OurMissionSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import NewsHighlights from "@/components/sections/NewsHighlights";
 
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
         <HeroSection />
         <BrandsSection />
         <FeaturesSection />
+        <NewsHighlights />
         <DemoVideoSection />
         <CoursesSection />
         <BlogsSection />
