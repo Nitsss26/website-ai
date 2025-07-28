@@ -972,7 +972,7 @@ if (error ) {
     // Optionally update local state to show immediately
     
 
-      setBlogs([data, ...blogs]);
+      setBlogs([...(data ? [data] : []), ...blogs]);
 
     // Clear the form
     setNewBlog({ title: '', content: '', category: 'AI/ML', tags: '' });

@@ -1,4 +1,4 @@
-import { useAuth } from "@/context/authcontext";
+import { useAuth } from "@/context/Authcontext";
 import { cn } from "@/lib/utils";
 import {IconMenu2 } from "@tabler/icons-react";
 import Link from "next/link";

@@ -206,6 +206,11 @@ type Course = {
   likes: number;
   comments: number;
   progress: number;
+  instructor: string;
+   price: number;
+   duration_weeks: number;
+   thumbnail_url: string;
+   video_url: string;
 };
 
 export default function LearningPage() {
@@ -283,7 +288,7 @@ const [categoryData, setCategoryData] = useState<
   fetchProgressData();
   fetchStudyHours();
   fetchCategories();
-}, [timeframe]);
+}, [timeframe, supabase]);
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -318,7 +323,11 @@ const [categoryData, setCategoryData] = useState<
       progress: 0
     };
 
-    setCourses(prev => [newCourse, ...prev]);
+    // setCourses(prev => [newCourse, ...prev]);
+    setCourses((prev) => [
+  ...prev,
+  newCourse as Course, 
+]);
     setIsAddCourseOpen(false);
     setCourseForm({
       title: '',
@@ -383,21 +392,21 @@ const [categoryData, setCategoryData] = useState<
     return colors[category] || 'bg-gray-500';
   };
 
-  interface DifficultyColors {
-    [key: string]: string;
-    Beginner: string;
-    Intermediate: string;
-    Advanced: string;
-  }
+  // interface DifficultyColors {
+  //   [key: string]: string;
+  //   Beginner: string;
+  //   Intermediate: string;
+  //   Advanced: string;
+  // }
 
-  const getDifficultyColor = (difficulty: string): string => {
-    const colors: DifficultyColors = {
-      'Beginner': 'bg-green-900/50 text-green-300 border-green-700',
-      'Intermediate': 'bg-yellow-900/50 text-yellow-300 border-yellow-700',
-      'Advanced': 'bg-red-900/50 text-red-300 border-red-700'
-    };
-    return colors[difficulty] || 'bg-gray-900/50 text-gray-300 border-gray-700';
-  };
+  // const getDifficultyColor = (difficulty: string): string => {
+  //   const colors: DifficultyColors = {
+  //     'Beginner': 'bg-green-900/50 text-green-300 border-green-700',
+  //     'Intermediate': 'bg-yellow-900/50 text-yellow-300 border-yellow-700',
+  //     'Advanced': 'bg-red-900/50 text-red-300 border-red-700'
+  //   };
+  //   return colors[difficulty] || 'bg-gray-900/50 text-gray-300 border-gray-700';
+  // };
 
   // const getAnalyticsData = () => {
   //   switch (timeframe) {
