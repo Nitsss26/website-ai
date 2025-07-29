@@ -311,36 +311,90 @@ const [categoryData, setCategoryData] = useState<
 
   console.log(courses, "all couurses ")
 
-  const handleSubmit = () => {
-    const newCourse = {
-      id: Date.now(),
-      ...courseForm,
-      date: new Date().toISOString().split('T')[0],
-      tags: courseForm.tags.split(',').map(tag => tag.trim()),
-      views: 0,
-      likes: 0,
-      comments: 0,
-      progress: 0
-    };
+//   const handleSubmit = () => {
+//     const newCourse = {
+//       id: Date.now(),
+//       ...courseForm,
+//       date: new Date().toISOString().split('T')[0],
+//       tags: courseForm.tags.split(',').map(tag => tag.trim()),
+//       views: 0,
+//       likes: 0,
+//       comments: 0,
+//       progress: 0
+//     };
+//      const { data, error } = await supabase.from("courses").insert([newCourse]);
+//      if (error) {
+//     console.error("Failed to add course:", error.message);
+//     return;
+//   }
 
-    // setCourses(prev => [newCourse, ...prev]);
-    setCourses((prev) => [
-  ...prev,
-  newCourse as Course, 
-]);
-    setIsAddCourseOpen(false);
-    setCourseForm({
-      title: '',
-      description: '',
-      author: '',
-      readTime: '',
-      category: '',
-      image: '',
-      tags: '',
-      difficulty: '',
-      duration: ''
-    });
+//     // setCourses(prev => [newCourse, ...prev]);
+// //     
+// setCourses(prev => [...prev, { ...newCourse, id: data[0].id } as Course]);
+//   setIsAddCourseOpen(false);
+
+//   // Reset form
+//   setCourseForm({
+//     title: '',
+//     description: '',
+//     author: '',
+//     readTime: '',
+//     category: '',
+//     image: '',
+//     tags: '',
+//     difficulty: '',
+//     duration: ''
+//   });
+// };
+
+const handleSubmit = async () => {
+  
+  const isFormIncomplete = Object.values(courseForm).some(value => value.trim() === '');
+
+  if (isFormIncomplete) {
+    alert("Please fill in all the fields before submitting.");
+    return;
+  }
+  const newCourse = {
+     ...courseForm,
+    
+    // date: new Date().toISOString().split('T')[0],
+    tags: courseForm.tags.split(',').map(tag => tag.trim()),
+    views: 0,
+    likes: 0,
+    comments: 0,
+    // progress: 0
   };
+
+  const { data: insertedCourses, error } = await supabase
+    .from("courses")
+    .insert([newCourse])
+    .select(); // To get inserted row(s) back
+
+  if (error) {
+    console.error("Failed to add course:", error.message);
+    return;
+  }
+
+  if (insertedCourses && insertedCourses.length > 0) {
+    setCourses(prev => [...prev, insertedCourses[0] as Course]);
+  }
+
+  setIsAddCourseOpen(false);
+
+  // Reset form
+  setCourseForm({
+    title: '',
+    description: '',
+    author: '',
+    readTime: '',
+    category: '',
+    image: '',
+    tags: '',
+     difficulty: '',
+    duration: ''
+  });
+};
 
   const handleDelete = async (courseId: number) => {
     const { error } = await supabase.from("courses").delete().eq("id", courseId);
@@ -1004,8 +1058,8 @@ const [categoryData, setCategoryData] = useState<
                         placeholder="e.g., 6 weeks"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="difficulty">Difficulty</Label>
+                     <div className="space-y-2">
+                      <Label htmlFor="difficulty">Difficuilty</Label>
                       <Select value={courseForm.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
                         <SelectTrigger className="bg-gray-800 border-gray-700">
                           <SelectValue placeholder="Select difficulty" />
@@ -1016,7 +1070,7 @@ const [categoryData, setCategoryData] = useState<
                           <SelectItem value="Advanced">Advanced</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> 
                   </div>
 
                   <div className="space-y-2">
