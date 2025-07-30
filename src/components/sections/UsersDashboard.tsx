@@ -686,7 +686,7 @@ import  { UserInfo } from "./admindashboard-components/DashboardHeader";
 import SectionCards from "./admindashboard-components/SectionCards";
 import UsersList from "./admindashboard-components/UsersList";
 import { createClient } from "@/lib/supabase/client";
-import { useAuth } from "@/context/authcontext";
+import { useAuth } from "@/context/Authcontext";
 import { IconCalendar } from "@tabler/icons-react";
 import { HeadingCard, HeadingProperties } from "./Dashboard";
 
